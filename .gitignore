@@ -1,0 +1,15 @@
+# Each teammate's own database settings
+web/config.local.php
+
+# Photos uploaded while testing (the folder itself is kept via .gitkeep)
+web/uploads/items/*
+!web/uploads/items/.gitkeep
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local tool settings
+.claude/
