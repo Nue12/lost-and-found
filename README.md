@@ -55,12 +55,14 @@ New users can register with any email ending in `university.edu`. Change this in
 
 1. Log in as **aung.min**. **My reports** shows a 100% match alert for the wallet at the Main Library.
 2. On the **Feed**, filter Color = Black and Held at = Main Library.
-3. Report a lost item that's already on the feed, for example "Silver laptop", Laptop, Silver, Science Complex. A match appears at once. Submit it again to see the duplicate check.
+3. Report a lost item that's already on the feed, for example "Silver laptop", Laptop, Silver, Science Complex, lost 7 days ago. A 100% match appears at once. Submit it again to see the duplicate check.
 4. Log in as **admin.library**. Under **Inventory**, click **Hand over** on the wallet. You'll see the private note about the blue keychain. Choose Aung Min, enter the proof and confirm.
 5. **Activity** now shows the handover and the audit trail. **Run expiration now** expires the 100-day-old umbrella.
 6. Log in as **admin.library** again and **Log found item** with a photo. Matching students are alerted automatically.
 
 To reset all demo data, import `smart_lost_and_found_full.sql` again.
+
+To test every workflow step by step, follow [TESTING.md](TESTING.md).
 
 ## Security notes
 
