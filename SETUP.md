@@ -42,10 +42,10 @@ Open **Command Prompt** and run:
 
 ```bat
 cd C:\xampp\htdocs
-git clone <REPO-URL> smart_lost_and_found
+git clone https://github.com/Nue12/lost-and-found.git smart_lost_and_found
 ```
 
-Replace `<REPO-URL>` with the GitHub link (the green **Code** button on the repository page).
+The folder must be named `smart_lost_and_found`, so the website address below works. If the repository is private, ask the owner to add you as a collaborator first.
 
 ### A3. Create the database in phpMyAdmin
 1. Open http://localhost/phpmyadmin.
@@ -73,7 +73,7 @@ Open **Terminal** and run:
 
 ```bash
 cd /Applications/XAMPP/htdocs
-git clone <REPO-URL> smart_lost_and_found
+git clone https://github.com/Nue12/lost-and-found.git smart_lost_and_found
 ```
 
 ### B3. Create the database
@@ -124,7 +124,7 @@ It should print `... = true;`.
 
 ```bash
 cd ~/Documents
-git clone <REPO-URL> smart_lost_and_found
+git clone https://github.com/Nue12/lost-and-found.git smart_lost_and_found
 cd smart_lost_and_found
 ```
 
