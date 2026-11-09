@@ -49,6 +49,7 @@ New users can register with any email ending in `university.edu`. Change this in
 | `item.php` | Everyone | Item details. Private notes and photos are shown only to the holding counter's admin |
 | `admin_handover.php` | Admin | 6 and 7. Check proof against private notes, then record the handover |
 | `admin_inventory.php` | Admin | 8. Counter stock by status, with a "Run expiration now" button |
+| `admin_lost_reports.php` | Admin | 4 and 5. Every student's lost report across campus, with the best match score and an "At your counter" badge |
 | `admin_activity.php` | Admin | 8. Handover history and audit log |
 
 ## Demo script (5 minutes)

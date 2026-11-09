@@ -74,7 +74,14 @@ if ($item['report_type'] === 'FOUND' && $isHoldingAdmin) {
 $pageTitle = $item['title'];
 require __DIR__ . '/includes/header.php';
 ?>
-<p><a href="<?= $item['report_type'] === 'LOST' && !is_admin() ? 'my_reports.php' : (is_admin() ? 'admin_inventory.php' : 'feed.php') ?>">‹ Back</a></p>
+<?php
+if ($item['report_type'] === 'LOST') {
+    $back = is_admin() ? 'admin_lost_reports.php' : 'my_reports.php';
+} else {
+    $back = is_admin() ? 'admin_inventory.php' : 'feed.php';
+}
+?>
+<p><a href="<?= $back ?>">‹ Back</a></p>
 
 <div class="two-col">
   <div class="stack">
@@ -103,7 +110,7 @@ require __DIR__ . '/includes/header.php';
         <dd><?= $item['event_building'] ? e($item['event_building'] . ' - ' . $item['event_counter']) : 'Not sure' ?></dd>
         <dt><?= $item['report_type'] === 'FOUND' ? 'Found on' : 'Lost on' ?></dt><dd><?= format_date($item['event_date']) ?></dd>
         <dt>Listed until</dt><dd><?= format_date($item['expiration_date']) ?></dd>
-        <?php if (is_admin()): ?><dt>Logged by</dt><dd><?= e($item['creator_email']) ?></dd><?php endif; ?>
+        <?php if (is_admin()): ?><dt><?= $item['report_type'] === 'FOUND' ? 'Logged by' : 'Reported by' ?></dt><dd><?= e($item['creator_email']) ?></dd><?php endif; ?>
       </dl>
     </div>
 

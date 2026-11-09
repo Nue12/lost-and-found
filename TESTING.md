@@ -91,14 +91,14 @@ A found item is **never** matched if it was found more than one day *before* the
 | T1.7 | Log in as `test.student@…` with password `wrongpass`. | Error: "Incorrect email or password." |
 | T1.8 | Log in as `test.student@…` with password `password123`. | You land on the **Feed**. The menu shows student links only (Feed, Report lost item, My reports), with no admin links. |
 | T1.9 | In phpMyAdmin, open the `users` table. | The new account has role **USER**, an empty `location_id`, and a `password_hash` starting with `$2y$`. The real password isn't stored anywhere. |
-| T1.10 | Log out, then log in as **admin.library**. | You land on **Inventory**. The menu also shows Log found item, Inventory and Activity. |
+| T1.10 | Log out, then log in as **admin.library**. | You land on **Inventory**. The menu also shows Log found item, Inventory, Lost reports and Activity. |
 
 ## 2. Access control
 
 | ID | Steps | Expected result |
 |---|---|---|
 | T2.1 | Log out, then type `…/feed.php` into the address bar. | You're sent to the login page. |
-| T2.2 | Log in as **aung.min**, then go to `…/admin_inventory.php`. | You're sent to the Feed with "That page is for counter admins only." Try `admin_log_found.php`, `admin_handover.php?id=6` and `admin_activity.php` as well. |
+| T2.2 | Log in as **aung.min**, then go to `…/admin_inventory.php`. | You're sent to the Feed with "That page is for counter admins only." Try `admin_log_found.php`, `admin_lost_reports.php`, `admin_handover.php?id=6` and `admin_activity.php` as well. |
 | T2.3 | As **aung.min**, open `…/item.php?id=2` (may.thu's lost report). | "This item is not available." Students can only see their own lost reports. |
 | T2.4 | As **aung.min**, open `…/item.php?id=8` (a returned item). | "This item is not available." Students only see found items that are still AVAILABLE. |
 
@@ -133,6 +133,11 @@ Log in as **aung.min**.
 | T4.3 | Report with the date set to tomorrow. | Error: "Enter the date you lost it (not in the future)." |
 | T4.4 | Report with no category or no title. | "Choose a category." / "Give the item a short title." |
 | T4.5 | Report something nobody has found: title `Red scarf`, category **Clothing**, color `Red`. | Saved, with no matches shown. The report is OPEN. |
+| T4.6 | Log in as **admin.science** (any admin works) and open **Lost reports**. | Every student's lost report from every location is listed, including aung.min's laptop and red scarf from T4.1 and T4.5. The menu link shows the number of open reports, for example "Lost reports (6)". |
+| T4.7 | On **Lost reports**, look at the **Best match** column. | The laptop report shows **100%** with an **At your counter** badge, because admin.science's counter holds the laptop. The red scarf shows "None yet". |
+| T4.8 | Log in as **admin.engineering** and open **Lost reports**. | The same reports appear. Now the **At your counter** badge is on may.thu's **Blue iPhone 14** instead of the laptop. |
+| T4.9 | Try the **Open / Returned / Expired / All** tabs, then the **Keyword**, **Category** and **Lost near** filters. | john.lee's keys report appears under **Returned**. The filters narrow the list, and **Clear** resets them. |
+| T4.10 | Click a report's title. | The report opens, showing who reported it and its possible matches. **‹ Back** returns to Lost reports. |
 
 ## 5. Admin logs a found item (workflow step 2)
 
@@ -278,7 +283,7 @@ Copy this into your group chat or an issue and tick off each item.
 - [ ] 1. Registration and login (T1.1–T1.10)
 - [ ] 2. Access control (T2.1–T2.4)
 - [ ] 3. Feed, filters and item privacy (T3.1–T3.11)
-- [ ] 4. Lost report, instant match, duplicate check (T4.1–T4.5)
+- [ ] 4. Lost report, instant match, duplicate check, admin Lost reports page (T4.1–T4.10)
 - [ ] 5. Log found item, photo upload, auto-match (T5.1–T5.7)
 - [ ] 6. Match alerts, including the under-70% case (T6.1–T6.5)
 - [ ] 7. Verification and handover (T7.1–T7.11)

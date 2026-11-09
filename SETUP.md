@@ -18,6 +18,8 @@ All options end with the same result:
 | phpMyAdmin | Option A/B: http://localhost/phpmyadmin · Option C: http://localhost:8080 |
 | Database name | `smart_lost_and_found` |
 
+Presenting with an admin laptop and a student laptop? See [Presenting from two computers](#presenting-from-two-computers).
+
 ---
 
 ## What you need
@@ -243,6 +245,74 @@ Commit both the edited file and the rebuilt full file. Teammates then pull and r
 
 ---
 
+## Presenting from two computers
+
+For the demo you can show the admin and the student at the same time, on two laptops. You **don't need hosting**. One laptop (the **server**) runs the database and the website, and the other laptop (the **guest**) opens the website through the network. Both laptops then use the same database, so when the admin logs a found item, the student laptop sees the match alert straight away.
+
+The guest laptop doesn't need anything installed, just a browser.
+
+### 1. Connect both laptops to the same network
+
+Use a **phone hotspot**. University and café Wi-Fi often block laptops from connecting to each other, even when both are on the same network. Test the setup with the hotspot before presentation day.
+
+### 2. Start the website on the server laptop
+
+Do the normal setup from Option A, B or C on this laptop first. Then:
+
+| Server laptop uses | What to do |
+|---|---|
+| XAMPP (Option A or B) | Start Apache and MySQL as usual. Apache already accepts connections from other computers. |
+| Homebrew (Option C) | Start the website with `0.0.0.0` instead of `localhost` (see below). |
+
+```bash
+php -S 0.0.0.0:8000 -t web
+```
+
+> `localhost` means "this computer only", so other laptops can't connect to it. `0.0.0.0` accepts connections from the network too. Keep using `localhost` the rest of the time.
+
+### 3. Find the server laptop's IP address
+
+- **macOS:** run this in Terminal (use `en1` if `en0` prints nothing):
+  ```bash
+  ipconfig getifaddr en0
+  ```
+- **Windows:** run `ipconfig` in Command Prompt and copy the **IPv4 Address** of your Wi-Fi adapter.
+
+It looks like `172.20.10.2` or `192.168.1.23`. The address can change each time you connect, so check it again on the day.
+
+### 4. Allow the connection through the firewall
+
+The first time the guest laptop connects, the server laptop may ask whether to allow incoming connections:
+
+- **macOS:** click **Allow** for `php` or `httpd`.
+- **Windows:** tick **Private networks** for *Apache HTTP Server* and click **Allow access**. If you connected to a hotspot, make sure Windows treats that network as **Private**: go to **Settings → Network & internet → Wi-Fi → (your network)** and choose **Private network**.
+
+### 5. Open the website on the guest laptop
+
+| Server laptop uses | Address on the guest laptop |
+|---|---|
+| XAMPP | `http://<IP>/smart_lost_and_found/web/` |
+| Homebrew | `http://<IP>:8000` |
+
+For example `http://192.168.1.23:8000`. Log in as a student on the guest laptop and as an admin on the server laptop.
+
+### Suggested demo script
+
+1. **Student laptop:** log in as `aung.min`. **My reports** shows a 100% match alert for the wallet at the Main Library.
+2. **Admin laptop:** log in as `admin.library`. Go to **Inventory** and click **Hand over** on the wallet. Show the private notes, record the handover and confirm.
+3. **Student laptop:** refresh **My reports**. The alert is gone and the wallet is listed under **Items you collected**.
+4. **Student laptop:** log in as `kyaw.zin` (who lost white AirPods), and open **My reports**. There are no alerts yet.
+5. **Admin laptop:** **Log found item**: `White AirPods case`, category Headphones, color White, found at Main Library, today. The page says one student was alerted.
+6. **Student laptop:** refresh **My reports**. The new AirPods alert appears.
+
+Re-import `smart_lost_and_found_full.sql` on the server laptop right before presenting, so the demo starts from clean data. [TESTING.md](TESTING.md) lists more scenarios.
+
+### Backup plan: one laptop, two browsers
+
+If the network doesn't work, both accounts can still be logged in at the same time on one laptop. Each browser keeps its own login, so use two different browsers, for example Chrome for the admin and Safari, Firefox or Edge for the student. A Chrome incognito window also works. Put the two windows side by side on the projector.
+
+---
+
 ## Troubleshooting
 
 | Problem | Fix |
@@ -258,6 +328,7 @@ Commit both the edited file and the rebuilt full file. Teammates then pull and r
 | Blank page or `Parse error` | Your PHP is older than 8.1. Update XAMPP, or run `brew upgrade php`. |
 | Photo upload fails | Make sure `web/uploads/items` exists and is writable (see the tip in [Option B](#b4-open-the-website)). |
 | Page says *"Invalid form submission"* | Your session expired. Refresh the page and submit again. |
+| Second laptop can't open the website (it keeps loading, then times out) | Check that both laptops are on the same network (a phone hotspot is safest) and that you used the server's current IP address. With Homebrew, start the server with `php -S 0.0.0.0:8000 -t web`, not `localhost`. Allow the connection through the firewall ([step 4](#4-allow-the-connection-through-the-firewall)). |
 | Feed photos show category names instead of pictures | Normal: sample items have no image files. Photos you upload through **Log found item** display normally. |
 
 ## Project structure

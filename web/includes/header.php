@@ -29,6 +29,8 @@ function nav_link(string $href, string $label, string $current): string
         <?php if ($user['role'] === 'ADMIN'): ?>
           <?= nav_link('admin_log_found.php', 'Log found item', $current) ?>
           <?= nav_link('admin_inventory.php', 'Inventory', $current) ?>
+          <?php $openLost = (int)db()->query("SELECT COUNT(*) FROM items WHERE report_type = 'LOST' AND status = 'OPEN'")->fetchColumn(); ?>
+          <?= nav_link('admin_lost_reports.php', "Lost reports ($openLost)", $current) ?>
           <?= nav_link('admin_activity.php', 'Activity', $current) ?>
         <?php else: ?>
           <?= nav_link('report_lost.php', 'Report lost item', $current) ?>
