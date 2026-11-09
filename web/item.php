@@ -112,6 +112,9 @@ if ($item['report_type'] === 'LOST') {
         <dt>Listed until</dt><dd><?= format_date($item['expiration_date']) ?></dd>
         <?php if (is_admin()): ?><dt><?= $item['report_type'] === 'FOUND' ? 'Logged by' : 'Reported by' ?></dt><dd><?= e($item['creator_email']) ?></dd><?php endif; ?>
       </dl>
+      <?php if ($isOwner && $item['status'] !== 'RETURNED'): ?>
+        <div><?= delete_button($item['item_id'], $item['title'], 'btn btn-danger') ?></div>
+      <?php endif; ?>
     </div>
 
     <?php if ($item['report_type'] === 'FOUND'): ?>

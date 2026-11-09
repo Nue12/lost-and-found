@@ -74,7 +74,10 @@ require __DIR__ . '/includes/header.php';
           </td>
           <td><?= (int)$i['match_count'] ?></td>
           <td><?= status_badge($i['status']) ?></td>
-          <td><?php if ($i['status'] === 'AVAILABLE'): ?><a class="btn btn-sm" href="admin_handover.php?id=<?= $i['item_id'] ?>">Hand over</a><?php endif; ?></td>
+          <td style="white-space:nowrap">
+            <?php if ($i['status'] === 'AVAILABLE'): ?><a class="btn btn-sm" href="admin_handover.php?id=<?= $i['item_id'] ?>">Hand over</a><?php endif; ?>
+            <?php if ($i['logged_by'] === $user['email'] && $i['status'] !== 'RETURNED'): ?><?= delete_button($i['item_id'], $i['title']) ?><?php endif; ?>
+          </td>
         </tr>
       <?php endforeach; ?>
     </table>

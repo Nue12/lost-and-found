@@ -11,15 +11,18 @@ $stmt = db()->prepare(
 $stmt->execute([$user['location_id']]);
 $returns = $stmt->fetchAll();
 
-// Audit trail for items held at this counter
+// Audit trail for items held at this counter, plus deletions made by this
+// counter's admins (a deleted item no longer has a row to join to)
 $stmt = db()->prepare(
     "SELECT a.* FROM v_audit_trail a
-     JOIN items i ON i.item_id = a.target_item_id
+     LEFT JOIN items i  ON i.item_id = a.target_item_id
+     LEFT JOIN users au ON au.university_email = a.actor
      WHERE i.holding_location_id = ?
+        OR (a.target_item_id IS NULL AND au.location_id = ?)
      ORDER BY a.log_id DESC
      LIMIT 100"
 );
-$stmt->execute([$user['location_id']]);
+$stmt->execute([$user['location_id'], $user['location_id']]);
 $logs = $stmt->fetchAll();
 
 $pageTitle = 'Activity';

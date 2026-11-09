@@ -106,6 +106,9 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--brand); out
 .btn-light { background: #efece5; color: var(--text); }
 .btn-light:hover { background: #e3dfd5; }
 .btn-sm { padding: 6px 10px; font-size: 13px; }
+.btn-danger { background: var(--err-soft); color: var(--err); }
+.btn-danger:hover { background: #f9d7d3; }
+.inline-form { display: inline; margin: 0; }
 
 /* Filters */
 .filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 22px; align-items: end; }

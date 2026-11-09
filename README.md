@@ -51,6 +51,7 @@ New users can register with any email ending in `university.edu`. Change this in
 | `admin_inventory.php` | Admin | 8. Counter stock by status, with a "Run expiration now" button |
 | `admin_lost_reports.php` | Admin | 4 and 5. Every student's lost report across campus, with the best match score and an "At your counter" badge |
 | `admin_activity.php` | Admin | 8. Handover history and audit log |
+| `delete_item.php` | Creator only | Deletes a lost report (student) or a found item (the admin who logged it). Returned items can't be deleted |
 
 ## Demo script (5 minutes)
 

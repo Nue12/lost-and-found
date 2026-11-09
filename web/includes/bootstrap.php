@@ -163,6 +163,16 @@ function status_badge(string $status): string
     return '<span class="badge badge-' . strtolower(e($status)) . '">' . e($status) . '</span>';
 }
 
+// Delete button for an item the current user created (posts to delete_item.php)
+function delete_button(int $itemId, string $title, string $class = 'btn btn-danger btn-sm'): string
+{
+    $question = json_encode("Delete \"$title\"? This can't be undone.");
+    return '<form method="post" action="delete_item.php" class="inline-form" onsubmit="return confirm(' . e($question) . ')">'
+        . csrf_field()
+        . '<input type="hidden" name="id" value="' . $itemId . '">'
+        . '<button class="' . e($class) . '">Delete</button></form>';
+}
+
 function format_date(?string $date): string
 {
     return $date ? date('j M Y', strtotime($date)) : '—';

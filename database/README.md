@@ -38,6 +38,7 @@ Importing again resets everything. The script drops and recreates the tables.
 | 6. Live verification | `v_admin_inventory` (with `private_notes`). `trg_returns_before_insert`: only the holding counter's admin, and only AVAILABLE items |
 | 7. Counter handover | `sp_record_handover`, which inserts into `returns` (one handover per item), plus `v_return_history` |
 | 8. Closure, expiry and audit | `trg_returns_after_insert` sets RETURNED. `trg_items_before_update` blocks RETURNED without a handover. `sp_expire_items` and `ev_daily_expire_items`. Every action goes to `audit_logs` (`v_audit_trail`) |
+| Deleting a report | `sp_delete_item`: only the user who created the item. `trg_items_before_delete` blocks deleting RETURNED items. `trg_items_after_delete` writes the deletion to `audit_logs`. Images and matches are removed by `ON DELETE CASCADE` |
 
 **Match score (out of 100):** same category 40 (required), same color 25, same event location 15, dates within 2 days 10 (within 7 days 5), title or description overlap 10.
 

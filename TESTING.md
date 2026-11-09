@@ -205,6 +205,25 @@ Log in as **admin.library**.
 
 ---
 
+## 10. Deleting reports
+
+Only the person who created a report can delete it. Students delete their own lost reports, and admins delete the found items they logged. Returned items can't be deleted, because they are part of the handover history.
+
+| ID | Steps | Expected result |
+|---|---|---|
+| T10.1 | Log in as **sara.khan** and open **My reports**. | Her open Grey backpack report has a **Delete** button. |
+| T10.2 | Click **Delete**, then **Cancel** in the confirm box. | Nothing is deleted. |
+| T10.3 | Click **Delete** again and confirm. | "Deleted "Grey backpack"." The report disappears from **My reports**, and from **Lost reports** for every admin (the menu count drops by one). |
+| T10.4 | Log in as **john.lee** and open **My reports**. | His keys report is RETURNED and has **no** Delete button. |
+| T10.5 | Log in as **admin.engineering** and open **Inventory**. | The blue smartphone and green water bottle (both logged by admin.engineering) have **Delete** buttons. |
+| T10.6 | Delete the **green water bottle**. | "Deleted "Green water bottle"." It's gone from Inventory and from the Feed. |
+| T10.7 | Open **Activity**. | The audit log shows "Deleted FOUND report #12: Green water bottle" by admin.engineering. |
+| T10.8 | Still as admin.engineering, open `…/item.php?id=6` (the Main Library wallet). | No Delete button, because admin.library logged it. |
+| T10.9 | Log a found item with a photo (as in T5.3), then delete it. | The photo file is also removed from `web/uploads/items/`. |
+| T10.10 | Delete a found item that matched a student's report, such as may.thu's phone (item 7, as admin.engineering). Then log in as **may.thu**. | Her match alert has gone. Her lost report is still OPEN. |
+
+---
+
 # Part B: Database rule tests (phpMyAdmin)
 
 These prove the **database itself** enforces the rules, even if someone bypasses the website.
@@ -268,6 +287,10 @@ SELECT * FROM v_audit_trail ORDER BY log_id DESC LIMIT 20;
 | B2.13 | `INSERT INTO users (university_email, password_hash) VALUES ('aung.min@student.university.edu', 'h');` | Duplicate entry (the email must be unique) |
 | B2.14 | `DELETE FROM locations WHERE location_id = 1;` | Cannot delete or update a parent row (a foreign key protects it) |
 | B2.15 | `INSERT INTO matches (lost_item_id, found_item_id, match_score) VALUES (1, 6, 50);` | Duplicate entry (each lost/found pair is matched only once) |
+| B2.16 | `CALL sp_delete_item(6, 1);` (report 1 belongs to aung.min, not may.thu) | Only the person who created this report can delete it |
+| B2.17 | `CALL sp_delete_item(7, 3);` (john.lee's report 3 is returned) | Returned items are part of the handover history and cannot be deleted |
+| B2.18 | `DELETE FROM items WHERE item_id = 8;` (returned item, deleted directly) | Returned items are part of the handover history and cannot be deleted |
+| B2.19 | `CALL sp_delete_item(5, 1);` then `SELECT * FROM v_audit_trail ORDER BY log_id DESC LIMIT 1;` | Succeeds: `items_deleted = 1`. The match with item 6 is removed too, and the audit log shows "Deleted LOST report #1: Black leather wallet". |
 
 > `database/04_demo_queries.sql` contains the same walkthrough plus more reports, if you prefer to open one file.
 
@@ -289,10 +312,11 @@ Copy this into your group chat or an issue and tick off each item.
 - [ ] 7. Verification and handover (T7.1–T7.11)
 - [ ] 8. Expiry, history and audit log (T8.1–T8.6)
 - [ ] 9. Security (T9.1–T9.4)
+- [ ] 10. Deleting reports (T10.1–T10.10)
 
 **Database**
 - [ ] B1. Happy path from step 1 to step 8
-- [ ] B2. All 15 rule tests fail with the expected message
+- [ ] B2. Rule tests B2.1–B2.18 fail with the expected message, and B2.19 succeeds
 
 **After testing**
 - [ ] Re-imported `smart_lost_and_found_full.sql`

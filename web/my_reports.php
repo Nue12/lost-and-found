@@ -47,7 +47,7 @@ require __DIR__ . '/includes/header.php';
 <?php else: ?>
   <div class="table-wrap">
     <table>
-      <tr><th>Item</th><th>Category</th><th>Lost on</th><th>Matches</th><th>Status</th><th>Listed until</th></tr>
+      <tr><th>Item</th><th>Category</th><th>Lost on</th><th>Matches</th><th>Status</th><th>Listed until</th><th></th></tr>
       <?php foreach ($reports as $r): ?>
         <tr>
           <td><a href="item.php?id=<?= $r['item_id'] ?>"><?= e($r['title']) ?></a></td>
@@ -56,6 +56,7 @@ require __DIR__ . '/includes/header.php';
           <td><?= (int)$r['match_count'] ?></td>
           <td><?= status_badge($r['status']) ?></td>
           <td><?= format_date($r['expiration_date']) ?></td>
+          <td><?= $r['status'] !== 'RETURNED' ? delete_button($r['item_id'], $r['title']) : '' ?></td>
         </tr>
       <?php endforeach; ?>
     </table>

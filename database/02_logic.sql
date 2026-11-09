@@ -17,6 +17,8 @@ DROP TRIGGER IF EXISTS trg_items_before_insert;
 DROP TRIGGER IF EXISTS trg_items_after_insert;
 DROP TRIGGER IF EXISTS trg_items_before_update;
 DROP TRIGGER IF EXISTS trg_items_after_update;
+DROP TRIGGER IF EXISTS trg_items_before_delete;
+DROP TRIGGER IF EXISTS trg_items_after_delete;
 DROP TRIGGER IF EXISTS trg_returns_before_insert;
 DROP TRIGGER IF EXISTS trg_returns_after_insert;
 DROP PROCEDURE IF EXISTS sp_match_item;
@@ -27,6 +29,7 @@ DROP PROCEDURE IF EXISTS sp_search_feed;
 DROP PROCEDURE IF EXISTS sp_get_notifications;
 DROP PROCEDURE IF EXISTS sp_record_handover;
 DROP PROCEDURE IF EXISTS sp_expire_items;
+DROP PROCEDURE IF EXISTS sp_delete_item;
 DROP EVENT IF EXISTS ev_daily_expire_items;
 
 DELIMITER $$
@@ -164,6 +167,27 @@ BEGIN
     VALUES (@app_user_id, NEW.item_id,
             CONCAT('Status changed from ', OLD.status, ' to ', NEW.status));
   END IF;
+END$$
+
+-- Returned items are part of the handover history, so they can't be deleted
+CREATE TRIGGER trg_items_before_delete
+BEFORE DELETE ON items
+FOR EACH ROW
+BEGIN
+  IF OLD.status = 'RETURNED' THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Returned items are part of the handover history and cannot be deleted';
+  END IF;
+END$$
+
+-- Log the deletion. The item row is gone, so target_item_id stays NULL
+-- and the title is kept in the description instead.
+CREATE TRIGGER trg_items_after_delete
+AFTER DELETE ON items
+FOR EACH ROW
+BEGIN
+  INSERT INTO audit_logs (actor_user_id, target_item_id, action_description)
+  VALUES (@app_user_id, NULL,
+          CONCAT('Deleted ', OLD.report_type, ' report #', OLD.item_id, ': ', OLD.title));
 END$$
 
 -- =====================================================================
@@ -387,6 +411,26 @@ BEGIN
   WHERE status IN ('AVAILABLE', 'OPEN')
     AND expiration_date < CURDATE();
   SELECT ROW_COUNT() AS items_expired;
+END$$
+
+-- Delete a lost report or found item. Only the user who created it may
+-- delete it. Its images and matches are removed too (ON DELETE CASCADE).
+CREATE PROCEDURE sp_delete_item(IN p_user_id INT, IN p_item_id INT)
+BEGIN
+  DECLARE v_creator INT;
+
+  SELECT creator_user_id INTO v_creator FROM items WHERE item_id = p_item_id;
+
+  IF v_creator IS NULL THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Item not found';
+  END IF;
+  IF v_creator <> p_user_id THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Only the person who created this report can delete it';
+  END IF;
+
+  SET @app_user_id = p_user_id;
+  DELETE FROM items WHERE item_id = p_item_id;
+  SELECT ROW_COUNT() AS items_deleted;
 END$$
 
 -- Runs sp_expire_items every night at 01:00
